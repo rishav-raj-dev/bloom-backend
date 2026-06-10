@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  user_id    String     @default(uuid()) @id
+  user_email String  @unique
+  user_name  String
+  password String
+  habits Habit[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
+
+model Habit {
+  habit_id String @id @default(uuid())
+  habit_title String
+  habit_description String
+  habit_applicable_days HabitDay[]
+  activity_days ActivityDay[]
+  user_id String
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
+
+model HabitDay {
+  id String @id @default(uuid())
+  day String @default("")
+  description String @default("")
+  habit_id String
+  habit Habit @relation(fields: [habit_id], references: [habit_id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
+
+model ActivityDay {
+  activity_id String @id @default(uuid())
+  habit_id String
+  completed Boolean
+  habit Habit @relation(fields: [habit_id], references: [habit_id], onDelete: Cascade)
+  current_date DateTime @default(now())
+  updated_at DateTime @updatedAt()
+}
