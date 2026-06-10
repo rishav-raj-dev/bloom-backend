@@ -7,10 +7,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
+  const allowedOrigins = [
+    'http://localhost:3000',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean);
+
   app.enableCors({
-    origin: "http://localhost:3000",
-    credentials: true
-  })
+    origin: allowedOrigins,
+    credentials: true,
+  });
   await app.listen(process.env.PORT ?? 8000);
 }
 bootstrap();
