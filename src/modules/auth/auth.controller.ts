@@ -1,5 +1,5 @@
-import { Controller, Post, Get, Body, Headers, Req} from '@nestjs/common';
-import type {Request} from 'express';
+import { Controller, Post, Get, Body, Headers, Req, Res} from '@nestjs/common';
+import type {Request, Response} from 'express';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
@@ -9,14 +9,32 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() data: LoginDto) {
+  async login(@Body() data: LoginDto, @Res() res: Response) {
     const result = await this.authService.login(data);
-    return {
+    res.cookie(
+      process.env.COOKIE_NAME || "bloom_access_token",
+      result.token,
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      }
+    );
+    res.send({ 
       success: true,
       message: 'Logged in successfully.',
-      token: result.token,
       user: result.user,
-    };
+    });
+  }
+
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie(process.env.COOKIE_NAME || "bloom_access_token");
+    res.send({
+      success: true,
+      message: 'Logged out successfully.'
+    });
   }
 
   @Post('register')
