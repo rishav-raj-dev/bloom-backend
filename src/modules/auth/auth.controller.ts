@@ -17,7 +17,7 @@ export class AuthController {
       {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       }
     );
@@ -30,7 +30,11 @@ export class AuthController {
 
   @Post('logout')
   logout(@Res() res: Response) {
-    res.clearCookie(process.env.COOKIE_NAME || "bloom_access_token");
+    res.clearCookie(process.env.COOKIE_NAME || "bloom_access_token",{
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
     res.send({
       success: true,
       message: 'Logged out successfully.'
