@@ -148,7 +148,6 @@ export class QueryService{
     }
 
     async getTodayHabits(user_id: string, clientDate: string) {
-        const dayOfWeek = getDayOfWeek(clientDate);
         const [year, month, day] = clientDate.split('-').map(Number);
 
         const last7: string[] = [];
@@ -162,10 +161,7 @@ export class QueryService{
         rangeEnd.setUTCDate(rangeEnd.getUTCDate() + 1);
 
         const habits = await this.db.habit.findMany({
-            where: {
-                user_id,
-                habit_applicable_days: { some: { day: dayOfWeek } }
-            },
+            where: { user_id },
             include: {
                 habit_applicable_days: true,
                 activity_days: {
