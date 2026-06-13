@@ -34,6 +34,7 @@ model Habit {
   user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt()
+
 }
 
 model HabitDay {
@@ -49,7 +50,6 @@ model HabitDay {
 model ActivityDay {
   activity_id String @id @default(uuid())
   habit_id String
-  completed Boolean
   habit Habit @relation(fields: [habit_id], references: [habit_id], onDelete: Cascade)
   current_date DateTime @default(now())
   updated_at DateTime @updatedAt()

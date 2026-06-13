@@ -112,7 +112,6 @@ export type HabitDayScalarFieldEnum = (typeof HabitDayScalarFieldEnum)[keyof typ
 export const ActivityDayScalarFieldEnum = {
   activity_id: 'activity_id',
   habit_id: 'habit_id',
-  completed: 'completed',
   current_date: 'current_date',
   updated_at: 'updated_at'
 } as const

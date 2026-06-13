@@ -27,7 +27,6 @@ export type AggregateActivityDay = {
 export type ActivityDayMinAggregateOutputType = {
   activity_id: string | null
   habit_id: string | null
-  completed: boolean | null
   current_date: Date | null
   updated_at: Date | null
 }
@@ -35,7 +34,6 @@ export type ActivityDayMinAggregateOutputType = {
 export type ActivityDayMaxAggregateOutputType = {
   activity_id: string | null
   habit_id: string | null
-  completed: boolean | null
   current_date: Date | null
   updated_at: Date | null
 }
@@ -43,7 +41,6 @@ export type ActivityDayMaxAggregateOutputType = {
 export type ActivityDayCountAggregateOutputType = {
   activity_id: number
   habit_id: number
-  completed: number
   current_date: number
   updated_at: number
   _all: number
@@ -53,7 +50,6 @@ export type ActivityDayCountAggregateOutputType = {
 export type ActivityDayMinAggregateInputType = {
   activity_id?: true
   habit_id?: true
-  completed?: true
   current_date?: true
   updated_at?: true
 }
@@ -61,7 +57,6 @@ export type ActivityDayMinAggregateInputType = {
 export type ActivityDayMaxAggregateInputType = {
   activity_id?: true
   habit_id?: true
-  completed?: true
   current_date?: true
   updated_at?: true
 }
@@ -69,7 +64,6 @@ export type ActivityDayMaxAggregateInputType = {
 export type ActivityDayCountAggregateInputType = {
   activity_id?: true
   habit_id?: true
-  completed?: true
   current_date?: true
   updated_at?: true
   _all?: true
@@ -150,7 +144,6 @@ export type ActivityDayGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type ActivityDayGroupByOutputType = {
   activity_id: string
   habit_id: string
-  completed: boolean
   current_date: Date
   updated_at: Date
   _count: ActivityDayCountAggregateOutputType | null
@@ -179,7 +172,6 @@ export type ActivityDayWhereInput = {
   NOT?: Prisma.ActivityDayWhereInput | Prisma.ActivityDayWhereInput[]
   activity_id?: Prisma.StringFilter<"ActivityDay"> | string
   habit_id?: Prisma.StringFilter<"ActivityDay"> | string
-  completed?: Prisma.BoolFilter<"ActivityDay"> | boolean
   current_date?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
   habit?: Prisma.XOR<Prisma.HabitScalarRelationFilter, Prisma.HabitWhereInput>
@@ -188,7 +180,6 @@ export type ActivityDayWhereInput = {
 export type ActivityDayOrderByWithRelationInput = {
   activity_id?: Prisma.SortOrder
   habit_id?: Prisma.SortOrder
-  completed?: Prisma.SortOrder
   current_date?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   habit?: Prisma.HabitOrderByWithRelationInput
@@ -200,7 +191,6 @@ export type ActivityDayWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ActivityDayWhereInput[]
   NOT?: Prisma.ActivityDayWhereInput | Prisma.ActivityDayWhereInput[]
   habit_id?: Prisma.StringFilter<"ActivityDay"> | string
-  completed?: Prisma.BoolFilter<"ActivityDay"> | boolean
   current_date?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
   habit?: Prisma.XOR<Prisma.HabitScalarRelationFilter, Prisma.HabitWhereInput>
@@ -209,7 +199,6 @@ export type ActivityDayWhereUniqueInput = Prisma.AtLeast<{
 export type ActivityDayOrderByWithAggregationInput = {
   activity_id?: Prisma.SortOrder
   habit_id?: Prisma.SortOrder
-  completed?: Prisma.SortOrder
   current_date?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.ActivityDayCountOrderByAggregateInput
@@ -223,14 +212,12 @@ export type ActivityDayScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ActivityDayScalarWhereWithAggregatesInput | Prisma.ActivityDayScalarWhereWithAggregatesInput[]
   activity_id?: Prisma.StringWithAggregatesFilter<"ActivityDay"> | string
   habit_id?: Prisma.StringWithAggregatesFilter<"ActivityDay"> | string
-  completed?: Prisma.BoolWithAggregatesFilter<"ActivityDay"> | boolean
   current_date?: Prisma.DateTimeWithAggregatesFilter<"ActivityDay"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"ActivityDay"> | Date | string
 }
 
 export type ActivityDayCreateInput = {
   activity_id?: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
   habit: Prisma.HabitCreateNestedOneWithoutActivity_daysInput
@@ -239,14 +226,12 @@ export type ActivityDayCreateInput = {
 export type ActivityDayUncheckedCreateInput = {
   activity_id?: string
   habit_id: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
 }
 
 export type ActivityDayUpdateInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   habit?: Prisma.HabitUpdateOneRequiredWithoutActivity_daysNestedInput
@@ -255,7 +240,6 @@ export type ActivityDayUpdateInput = {
 export type ActivityDayUncheckedUpdateInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
   habit_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -263,14 +247,12 @@ export type ActivityDayUncheckedUpdateInput = {
 export type ActivityDayCreateManyInput = {
   activity_id?: string
   habit_id: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
 }
 
 export type ActivityDayUpdateManyMutationInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -278,7 +260,6 @@ export type ActivityDayUpdateManyMutationInput = {
 export type ActivityDayUncheckedUpdateManyInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
   habit_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -296,7 +277,6 @@ export type ActivityDayOrderByRelationAggregateInput = {
 export type ActivityDayCountOrderByAggregateInput = {
   activity_id?: Prisma.SortOrder
   habit_id?: Prisma.SortOrder
-  completed?: Prisma.SortOrder
   current_date?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -304,7 +284,6 @@ export type ActivityDayCountOrderByAggregateInput = {
 export type ActivityDayMaxOrderByAggregateInput = {
   activity_id?: Prisma.SortOrder
   habit_id?: Prisma.SortOrder
-  completed?: Prisma.SortOrder
   current_date?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -312,7 +291,6 @@ export type ActivityDayMaxOrderByAggregateInput = {
 export type ActivityDayMinOrderByAggregateInput = {
   activity_id?: Prisma.SortOrder
   habit_id?: Prisma.SortOrder
-  completed?: Prisma.SortOrder
   current_date?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -359,20 +337,14 @@ export type ActivityDayUncheckedUpdateManyWithoutHabitNestedInput = {
   deleteMany?: Prisma.ActivityDayScalarWhereInput | Prisma.ActivityDayScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type ActivityDayCreateWithoutHabitInput = {
   activity_id?: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
 }
 
 export type ActivityDayUncheckedCreateWithoutHabitInput = {
   activity_id?: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
 }
@@ -409,35 +381,30 @@ export type ActivityDayScalarWhereInput = {
   NOT?: Prisma.ActivityDayScalarWhereInput | Prisma.ActivityDayScalarWhereInput[]
   activity_id?: Prisma.StringFilter<"ActivityDay"> | string
   habit_id?: Prisma.StringFilter<"ActivityDay"> | string
-  completed?: Prisma.BoolFilter<"ActivityDay"> | boolean
   current_date?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ActivityDay"> | Date | string
 }
 
 export type ActivityDayCreateManyHabitInput = {
   activity_id?: string
-  completed: boolean
   current_date?: Date | string
   updated_at?: Date | string
 }
 
 export type ActivityDayUpdateWithoutHabitInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityDayUncheckedUpdateWithoutHabitInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActivityDayUncheckedUpdateManyWithoutHabitInput = {
   activity_id?: Prisma.StringFieldUpdateOperationsInput | string
-  completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   current_date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -447,7 +414,6 @@ export type ActivityDayUncheckedUpdateManyWithoutHabitInput = {
 export type ActivityDaySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   activity_id?: boolean
   habit_id?: boolean
-  completed?: boolean
   current_date?: boolean
   updated_at?: boolean
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
@@ -456,7 +422,6 @@ export type ActivityDaySelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ActivityDaySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   activity_id?: boolean
   habit_id?: boolean
-  completed?: boolean
   current_date?: boolean
   updated_at?: boolean
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
@@ -465,7 +430,6 @@ export type ActivityDaySelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 export type ActivityDaySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   activity_id?: boolean
   habit_id?: boolean
-  completed?: boolean
   current_date?: boolean
   updated_at?: boolean
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
@@ -474,12 +438,11 @@ export type ActivityDaySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type ActivityDaySelectScalar = {
   activity_id?: boolean
   habit_id?: boolean
-  completed?: boolean
   current_date?: boolean
   updated_at?: boolean
 }
 
-export type ActivityDayOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"activity_id" | "habit_id" | "completed" | "current_date" | "updated_at", ExtArgs["result"]["activityDay"]>
+export type ActivityDayOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"activity_id" | "habit_id" | "current_date" | "updated_at", ExtArgs["result"]["activityDay"]>
 export type ActivityDayInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   habit?: boolean | Prisma.HabitDefaultArgs<ExtArgs>
 }
@@ -498,7 +461,6 @@ export type $ActivityDayPayload<ExtArgs extends runtime.Types.Extensions.Interna
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     activity_id: string
     habit_id: string
-    completed: boolean
     current_date: Date
     updated_at: Date
   }, ExtArgs["result"]["activityDay"]>
@@ -927,7 +889,6 @@ export interface Prisma__ActivityDayClient<T, Null = never, ExtArgs extends runt
 export interface ActivityDayFieldRefs {
   readonly activity_id: Prisma.FieldRef<"ActivityDay", 'String'>
   readonly habit_id: Prisma.FieldRef<"ActivityDay", 'String'>
-  readonly completed: Prisma.FieldRef<"ActivityDay", 'Boolean'>
   readonly current_date: Prisma.FieldRef<"ActivityDay", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"ActivityDay", 'DateTime'>
 }

@@ -781,7 +781,6 @@ export type HabitDayScalarFieldEnum = (typeof HabitDayScalarFieldEnum)[keyof typ
 export const ActivityDayScalarFieldEnum = {
   activity_id: 'activity_id',
   habit_id: 'habit_id',
-  completed: 'completed',
   current_date: 'current_date',
   updated_at: 'updated_at'
 } as const
@@ -836,13 +835,6 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

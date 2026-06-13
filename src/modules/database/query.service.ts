@@ -89,9 +89,13 @@ export class QueryService{
             where: { habit_id, current_date: { gte: start, lt: end } }
         });
 
-        return this.db.activityDay.create({
-            data: { habit_id, current_date: start, completed: is_completed }
-        });
+        if (is_completed) {
+            return this.db.activityDay.create({
+                data: { habit_id, current_date: start }
+            });
+        }
+
+        return null;
     }
 
     async deleteHabit(habit_id: string) {
@@ -131,7 +135,7 @@ export class QueryService{
             const completed = applicable.filter(h =>
                 h.activity_days.some(a => {
                     const t = new Date(a.current_date).getTime();
-                    return t >= start.getTime() && t < end.getTime() && a.completed;
+                    return t >= start.getTime() && t < end.getTime();
                 })
             ).length;
             return {
