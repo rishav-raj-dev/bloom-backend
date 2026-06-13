@@ -18,18 +18,16 @@ export class HabitController {
     async getTodayHabits(
         @Query('user_id') user_id: string,
         @Query('clientDate') clientDate: string,
-        @Query('timezone') timezone: string,
     ){
-        return await this.habitService.getTodayHabits(user_id, clientDate, timezone);
+        return await this.habitService.getTodayHabits(user_id, clientDate);
     }
 
     @Get('analytics')
     async getAnalytics(
         @Query('user_id') user_id: string,
         @Query('currentDate') currentDate: string,
-        @Query('timezone') timezone: string,
     ){
-        return await this.habitService.getAnalytics(user_id, currentDate, timezone);
+        return await this.habitService.getAnalytics(user_id, currentDate);
     }
 
     @Patch(':habit_id')
@@ -43,7 +41,7 @@ export class HabitController {
     }
 
     @Post('activity/update')
-    async addOrUpdateActivity(@Body() body: { habit_id: string; is_completed: boolean; clientDate: string; timezone: string }){
-        return await this.habitService.addActivity(body.habit_id, body.is_completed, body.clientDate, body.timezone);
+    async addOrUpdateActivity(@Body() body: { habit_id: string; is_completed: boolean; clientDate: string }){
+        return await this.habitService.addActivity(body.habit_id, body.is_completed, body.clientDate);
     }
 }

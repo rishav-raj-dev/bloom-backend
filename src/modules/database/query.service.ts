@@ -1,32 +1,17 @@
 import { DataBaseService } from "./database.service";
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { UserRow } from "src/utils/types";
 import { ApplicableDays } from "src/modules/habit/dto/createHabit.dto";
 
-function getUTCBoundsForDate(dateStr: string, timezone: string): { start: Date; end: Date } {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    const localMidnight = new Date(new Date().toLocaleString('en-US', { timeZone: timezone }));
-    localMidnight.setFullYear(year, month - 1, day);
-    localMidnight.setHours(0, 0, 0, 0);
-
-    const serverNow = new Date();
-    const clientNow = new Date(serverNow.toLocaleString('en-US', { timeZone: timezone }));
-    const offsetMs = serverNow.getTime() - clientNow.getTime();
-
-    const start = new Date(localMidnight.getTime() + offsetMs);
-    const end = new Date(start.getTime() + 86400000);
-    return { start, end };
+function getUTCDayBounds(dateStr: string): { start: Date; end: Date } {
+    const start = new Date(dateStr + 'T00:00:00.000Z');
+    return { start, end: new Date(start.getTime() + 86400000) };
 }
 
-function getDayOfWeekInTimezone(dateStr: string, timezone: string): string {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    const d = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-    return d.toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone });
-}
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-function formatDateStr(d: Date, timezone: string): string {
-    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
-    return parts;
+function getDayOfWeek(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return DAYS[new Date(Date.UTC(year, month - 1, day)).getUTCDay()];
 }
 
 @Injectable()
@@ -34,7 +19,6 @@ export class QueryService{
     constructor(
         private readonly db: DataBaseService
     ){}
-
 
     async findUser(user_email: string){
         const user = await this.db.$queryRaw<any[]>`
@@ -46,22 +30,11 @@ export class QueryService{
         return user;
     }
 
-    async createUser(user_name: string, user_email:string, hashedPassword: string){
-        const user = await this.db.user.create(
-            {
-                data: {
-                    user_name,
-                    user_email,
-                    password: hashedPassword
-                },
-                select: {
-                    user_id: true,
-                    user_name: true,
-                    user_email: true,
-                    password: true,
-                }
-            }
-        )
+    async createUser(user_name: string, user_email: string, hashedPassword: string){
+        const user = await this.db.user.create({
+            data: { user_name, user_email, password: hashedPassword },
+            select: { user_id: true, user_name: true, user_email: true, password: true }
+        });
         return user;
     }
 
@@ -72,10 +45,7 @@ export class QueryService{
                 habit_description: description,
                 user_id,
                 habit_applicable_days: {
-                    create: applicableDays.map((applicableDay) => ({
-                        day: applicableDay.day,
-                        description: applicableDay.description || ''
-                    }))
+                    create: applicableDays.map(d => ({ day: d.day, description: d.description || '' }))
                 }
             },
             select: {
@@ -109,82 +79,59 @@ export class QueryService{
         return habit;
     }
 
-    async addOrUpdateActivity(habit_id: string, is_completed: boolean, clientDate: string, timezone: string) {
-        const habit = await this.db.habit.findFirst({
-            where: { habit_id }
-        });
-        if (!habit) {
-            throw new BadRequestException("Habit doesn't exist");
-        }
+    async addOrUpdateActivity(habit_id: string, is_completed: boolean, clientDate: string) {
+        const habit = await this.db.habit.findFirst({ where: { habit_id } });
+        if (!habit) throw new BadRequestException("Habit doesn't exist");
 
-        const { start, end } = getUTCBoundsForDate(clientDate, timezone);
+        const { start, end } = getUTCDayBounds(clientDate);
 
-        let activity_days = await this.db.activityDay.findFirst({
-            where: {
-                habit_id: habit.habit_id,
-                current_date: { gte: start, lt: end }
-            }
+        await this.db.activityDay.deleteMany({
+            where: { habit_id, current_date: { gte: start, lt: end } }
         });
 
-        if (activity_days) {
-            activity_days = await this.db.activityDay.update({
-                where: { activity_id: activity_days.activity_id },
-                data: { completed: is_completed }
-            });
-        } else {
-            activity_days = await this.db.activityDay.create({
-                data: {
-                    habit_id: habit.habit_id,
-                    current_date: start,
-                    completed: is_completed
-                }
-            });
-        }
-
-        return activity_days;
+        return this.db.activityDay.create({
+            data: { habit_id, current_date: start, completed: is_completed }
+        });
     }
 
     async deleteHabit(habit_id: string) {
-        return await this.db.habit.delete({
-            where: { habit_id }
-        });
+        return await this.db.habit.delete({ where: { habit_id } });
     }
 
-    async getAnalytics(user_id: string, currentDate: string, timezone: string) {
+    async getAnalytics(user_id: string, currentDate: string) {
         const [year, month, day] = currentDate.split('-').map(Number);
 
-        const last30DateStrs: string[] = [];
+        const last30: string[] = [];
         for (let i = 29; i >= 0; i--) {
-            const d = new Date(Date.UTC(year, month - 1, day - i, 12, 0, 0));
-            last30DateStrs.push(formatDateStr(d, timezone));
+            const d = new Date(Date.UTC(year, month - 1, day - i));
+            last30.push(d.toISOString().slice(0, 10));
         }
 
-        const rangeStart = getUTCBoundsForDate(last30DateStrs[0], timezone).start;
-        const rangeEnd = getUTCBoundsForDate(last30DateStrs[29], timezone).end;
+        const rangeStart = new Date(last30[0] + 'T00:00:00.000Z');
+        const rangeEnd = new Date(currentDate + 'T00:00:00.000Z');
+        rangeEnd.setUTCDate(rangeEnd.getUTCDate() + 1);
 
         const habits = await this.db.habit.findMany({
             where: { user_id },
             include: {
                 habit_applicable_days: true,
                 activity_days: {
-                    where: {
-                        current_date: { gte: rangeStart, lt: rangeEnd }
-                    }
+                    where: { current_date: { gte: rangeStart, lt: rangeEnd } }
                 }
             }
         });
 
-        return last30DateStrs.map(dateStr => {
-            const dayOfWeek = getDayOfWeekInTimezone(dateStr, timezone);
-            const { start, end } = getUTCBoundsForDate(dateStr, timezone);
-            const applicableHabits = habits.filter(h =>
+        return last30.map(dateStr => {
+            const dayOfWeek = getDayOfWeek(dateStr);
+            const { start, end } = getUTCDayBounds(dateStr);
+            const applicable = habits.filter(h =>
                 h.habit_applicable_days.some(d => d.day === dayOfWeek)
             );
-            const total = applicableHabits.length;
-            const completed = applicableHabits.filter(h =>
+            const total = applicable.length;
+            const completed = applicable.filter(h =>
                 h.activity_days.some(a => {
-                    const actTime = new Date(a.current_date).getTime();
-                    return actTime >= start.getTime() && actTime < end.getTime() && a.completed;
+                    const t = new Date(a.current_date).getTime();
+                    return t >= start.getTime() && t < end.getTime() && a.completed;
                 })
             ).length;
             return {
@@ -196,40 +143,33 @@ export class QueryService{
         });
     }
 
-    async getTodayHabits(user_id: string, clientDate: string, timezone: string) {
-        const dayOfWeek = getDayOfWeekInTimezone(clientDate, timezone);
-
-        const last7DateStrs: string[] = [];
+    async getTodayHabits(user_id: string, clientDate: string) {
+        const dayOfWeek = getDayOfWeek(clientDate);
         const [year, month, day] = clientDate.split('-').map(Number);
+
+        const last7: string[] = [];
         for (let i = 6; i >= 0; i--) {
-            const d = new Date(Date.UTC(year, month - 1, day - i, 12, 0, 0));
-            last7DateStrs.push(formatDateStr(d, timezone));
+            const d = new Date(Date.UTC(year, month - 1, day - i));
+            last7.push(d.toISOString().slice(0, 10));
         }
 
-        const rangeStart = getUTCBoundsForDate(last7DateStrs[0], timezone).start;
-        const rangeEnd = getUTCBoundsForDate(last7DateStrs[6], timezone).end;
+        const rangeStart = new Date(last7[0] + 'T00:00:00.000Z');
+        const rangeEnd = new Date(clientDate + 'T00:00:00.000Z');
+        rangeEnd.setUTCDate(rangeEnd.getUTCDate() + 1);
 
         const habits = await this.db.habit.findMany({
             where: {
                 user_id,
-                habit_applicable_days: {
-                    some: { day: dayOfWeek }
-                }
+                habit_applicable_days: { some: { day: dayOfWeek } }
             },
             include: {
                 habit_applicable_days: true,
                 activity_days: {
-                    where: {
-                        current_date: { gte: rangeStart, lt: rangeEnd }
-                    }
+                    where: { current_date: { gte: rangeStart, lt: rangeEnd } }
                 }
             }
         });
 
-        return {
-            habits,
-            dates: last7DateStrs
-        };
+        return { habits, dates: last7 };
     }
-    
 }

@@ -28,9 +28,9 @@ export class HabitService {
     }
 
 
-    async addActivity(habit_id: string, is_completed: boolean, clientDate: string, timezone: string){
+    async addActivity(habit_id: string, is_completed: boolean, clientDate: string){
         try {
-            const habit = await this.queryService.addOrUpdateActivity(habit_id, is_completed, clientDate, timezone);
+            const habit = await this.queryService.addOrUpdateActivity(habit_id, is_completed, clientDate);
             return {
                 success: true,
                 message: "Acitivity update successfully",
@@ -62,9 +62,9 @@ export class HabitService {
         }
     }
 
-    async getAnalytics(user_id: string, currentDate: string, timezone: string){
+    async getAnalytics(user_id: string, currentDate: string){
         try {
-            const data = await this.queryService.getAnalytics(user_id, currentDate, timezone);
+            const data = await this.queryService.getAnalytics(user_id, currentDate);
             return {
                 success: true,
                 message: "Analytics fetched successfully",
@@ -76,9 +76,9 @@ export class HabitService {
         }
     }
 
-    async getTodayHabits(user_id: string, clientDate: string, timezone: string){
+    async getTodayHabits(user_id: string, clientDate: string){
         try {
-            const data = await this.queryService.getTodayHabits(user_id, clientDate, timezone);
+            const data = await this.queryService.getTodayHabits(user_id, clientDate);
             return {
                 success: true,
                 message: "Today's habits fetched successfully",
